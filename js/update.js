@@ -8,7 +8,7 @@ function update() {
     game_title.innerHTML = window.location.href.split("/")[4];
   }
   let icon = document.getElementById("icon");
-  icon.setAttribute("href", "/resource/icon.png");
+  icon.setAttribute("href", window.location.origin + "/resource/icon.png");
 }
 update();
 function update_name() {
@@ -29,6 +29,9 @@ function update_icon() {
   let icon_update = document.getElementsByName("icon");
   for (let index = 0; index < icon_update.length; index++) {
     icon_update[index].style.backgroundImage =
-      "url(/resource/" + icon_update[index].getAttribute("tagname") + ".png)";
+      window.location.origin +
+      "url(/resource/" +
+      icon_update[index].getAttribute("tagname") +
+      ".png)";
   }
 }
