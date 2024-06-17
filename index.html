@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title id="title">~ 小游戏合集 ~</title>
+    <link id="icon" rel="icon" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <script type="text/javascript" src="/js/shortcut.js"></script>
+    <script type="text/javascript" src="/js/update.js"></script>
+    <script type="text/javascript" src="/js/url.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+  </head>
+  <body>
+    <div id="t">
+      <div id="t-information" class="background">
+        <div onclick="url_set(url[2])" id="t-icon" class="icon" name="icon" tagname="author"></div>
+        <span onclick="url_set(url[2])" id="t-name" name="name" tagname="author"></span>
+      </div>
+      <div id="t-navigation_bar" class="background">
+        <a onclick="url_r()"><div>主页</div></a>
+        <a onclick="url_set(url[1])"><div>关于本网</div></a>
+        <a onclick="url_set(url[2])"
+          ><div>关于<span name="name" tagname="author"></span></div
+        ></a>
+        <a
+          ><div>前往<span name="name" tagname="studio"></span></div
+        ></a>
+      </div>
+    </div>
+    <div id="prev" class="background"></div>
+    <div id="homepage" class="background"></div>
+    <script>
+      update_name();
+      update_icon();
+      where()
+    </script>
+  </body>
+</html>
