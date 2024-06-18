@@ -73,6 +73,12 @@ function Version(i, name, v) {
           let New = document.getElementsByName("new")[0];
           New.style.top = "50px";
         }
+      } else {
+        if (i == "x") {
+          document.getElementById("VERSION").style.left = getComputedStyle(
+            document.getElementById("homepage")
+          ).marginLeft;
+        }
       }
     }
   }
