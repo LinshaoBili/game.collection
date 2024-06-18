@@ -9,7 +9,7 @@ function url_r() {
   window.location.href = url_origin();
 }
 //自定义url开关
-const url_switch = false;
+const url_switch = true;
 try {
   if (Local("url_origin") == null) {
     Local_Save("url_origin", url_switch);
