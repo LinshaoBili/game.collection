@@ -9,13 +9,13 @@ function url_r() {
   window.location.href = url_origin();
 }
 //自定义url开关
-const url_switch = true;
+const url_switch = false;
 try {
   if (Local("url_origin") == null) {
-    Local_Save("url_origin", Switch);
+    Local_Save("url_origin", url_switch);
   }
 } catch (err) {
-  Local_Save("url_origin", Switch);
+  Local_Save("url_origin", url_switch);
 }
 var url_custom = "https://linshaobili.github.io/game.collection";
 if (url_switch != false) {

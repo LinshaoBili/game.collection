@@ -5,7 +5,8 @@ function update() {
     title.innerHTML = split_text(Name[0], "/", 1) + " " + title.innerHTML;
   } catch (err) {
     let game_title = document.getElementById("game_title");
-    game_title.innerHTML = window.location.href.split("/")[4];
+    game_title.innerHTML =
+      window.location.href.split("/")[url_origin().split("/").length + 1];
   }
   let icon = document.getElementById("icon");
   icon.setAttribute("href", url_origin() + "/resource/icon.png");

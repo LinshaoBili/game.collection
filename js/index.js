@@ -1,3 +1,15 @@
+const VERSION = "Demo 0.01";
+try {
+  if (VERSION != Local("VERSION")) {
+    var array = ["url_origin"];
+    for (let index = 0; index < array.length; index++) {
+      Local_Save(array[index], "c");
+    }
+  }
+} catch (err) {
+} finally {
+  Local_Save("VERSION", VERSION);
+}
 const game_list = ["Slang.Adventure"];
 const loading = document.createElement("div");
 let loading_t1 = document.createElement("p");
