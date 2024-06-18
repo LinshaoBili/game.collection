@@ -9,7 +9,7 @@ loading_t3.innerHTML = "原链接";
 loading_t1.style.fontSize = "25px";
 loading_t2.style.fontSize = "15px";
 loading_t3.style.color = "#0a6796";
-loading_t3.setAttribute("href", window.location.origin);
+loading_t3.setAttribute("href", url_origin());
 loading.appendChild(loading_t1);
 loading.appendChild(loading_t2);
 loading.appendChild(loading_t3);
@@ -50,13 +50,13 @@ function where() {
       for (let index = 0; index < game_list.length; index++) {
         let game = document.createElement("a"); //<a>
         game.setAttribute("class", "h-g-a");
-        game.href = window.location.origin + "/game/" + game_list[index];
+        game.href = url_origin() + "/game/" + game_list[index];
         let logo = document.createElement("div"); //<div>
         logo.setAttribute("class", "h-g-div");
         logo.tagName = game_list[index];
         logo.style.backgroundImage =
           "url('" +
-          window.location.origin +
+          url_origin() +
           "/game/" +
           game_list[index] +
           "/" +
@@ -114,6 +114,9 @@ function where() {
         prev.style.innerHTML = "";
       }, 250);
     }, 50);
+  } else {
+    let prev = document.getElementById("prev");
+    prev.style.display = "none";
   }
   //网页所在位置
   try {
