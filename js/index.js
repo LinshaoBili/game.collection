@@ -1,14 +1,81 @@
-const VERSION = "Demo 0.01";
-try {
-  if (VERSION != Local("VERSION")) {
-    var array = ["url_origin"];
-    for (let index = 0; index < array.length; index++) {
-      Local_Save(array[index], "c");
+const VERSION = 0.01;
+function Version(i, name, v) {
+  if (i == "update") {
+    try {
+      let vs = document.getElementById("VERSION");
+      vs.innerHTML = "";
+      if (Local("VERSION") == null) {
+        Local_Save("VERSION", VERSION);
+        Version("create", "old", VERSION);
+        setTimeout(function () {
+          let vs = document.getElementById("VERSION");
+          vs.style.opacity = "0.8";
+          setTimeout(function () {
+            let vs = document.getElementById("VERSION");
+            vs.style.opacity = "";
+          }, 1000);
+        }, 500);
+      } else {
+        if (Local("VERSION") != VERSION) {
+          var array = ["url_origin"];
+          for (let index = 0; index < array.length; index++) {
+            Local_Save(array[index], "c");
+          }
+          Version("create", "old", Local("VERSION"));
+          Local_Save("VERSION", VERSION);
+          Version("create", "new", VERSION);
+          Version("new");
+        } else {
+          setTimeout(function () {
+            let vs = document.getElementById("VERSION");
+            vs.style.opacity = "0.5";
+            setTimeout(function () {
+              let vs = document.getElementById("VERSION");
+              vs.style.opacity = "";
+            }, 1000);
+            Version("create", "old", Local("VERSION"));
+          }, 100);
+        }
+      }
+    } catch (err) {}
+  } else {
+    if (i == "new") {
+      let vs = document.getElementById("VERSION");
+      vs.style.opacity = "0.8";
+      setTimeout(function () {
+        let Old = document.getElementsByName("old")[0];
+        Old.style.top = "-25px";
+        setTimeout(function () {
+          let New = document.getElementsByName("new")[0];
+          New.style.top = "15px";
+          setTimeout(function () {
+            let vs = document.getElementById("VERSION");
+            vs.style.opacity = "";
+            document.getElementsByName("old")[0].remove();
+            let New = document.getElementsByName("new")[0];
+            New.setAttribute("name", "old");
+          }, 1000);
+        }, 250);
+      }, 500);
+    } else {
+      if (i == "create") {
+        let vs = document.getElementById("VERSION");
+        vs.style.left = getComputedStyle(
+          document.getElementById("homepage")
+        ).marginLeft;
+        var version = document.createElement("p");
+        version.setAttribute("name", name);
+        version.style.transition = "0.25s ease-in-out";
+        version.style.top = "15px";
+        version.innerHTML = "Version Demo " + v;
+        document.getElementById("VERSION").appendChild(version);
+        if (name == "new") {
+          let New = document.getElementsByName("new")[0];
+          New.style.top = "50px";
+        }
+      }
     }
   }
-} catch (err) {
-} finally {
-  Local_Save("VERSION", VERSION);
 }
 const game_list = ["Slang.Adventure"];
 const loading = document.createElement("div");

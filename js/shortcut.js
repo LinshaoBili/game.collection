@@ -12,7 +12,7 @@ function Local_Save(Name, Variable) {
       Variable == "c" ||
       Variable == undefined
     ) {
-      localStorage.clear(Name);
+      localStorage.removeItem(Name);
     } else {
       localStorage.setItem(Name, Variable);
     }

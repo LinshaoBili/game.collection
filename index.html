@@ -10,7 +10,7 @@
     <script type="text/javascript" src="js/update.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
   </head>
-  <body>
+  <body onresize="Version('update')">
     <div id="t">
       <div id="t-information" class="background">
         <div
@@ -45,6 +45,7 @@
       update_name();
       update_icon();
       where();
+      Version("update")
     </script>
   </body>
 </html>
