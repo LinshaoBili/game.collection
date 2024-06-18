@@ -1,4 +1,4 @@
-const VERSION = 0.01;
+const VERSION = "Demo 0.01";
 function Version(i, name, v) {
   if (i == "update") {
     try {
@@ -67,7 +67,7 @@ function Version(i, name, v) {
         version.setAttribute("name", name);
         version.style.transition = "0.25s ease-in-out";
         version.style.top = "15px";
-        version.innerHTML = "Version Demo " + v;
+        version.innerHTML = "Version " + v;
         document.getElementById("VERSION").appendChild(version);
         if (name == "new") {
           let New = document.getElementsByName("new")[0];
