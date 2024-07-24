@@ -1,4 +1,4 @@
-const VERSION = "Demo 0.01";
+const VERSION = "Alpha 0.01";
 function Version(i, name, v) {
   if (i == "update") {
     try {

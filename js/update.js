@@ -37,3 +37,7 @@ function update_icon() {
       ".png)";
   }
 }
+function resolution(ratio) {
+  var element = document.getElementById("subject");
+  element.style.aspectRatio = ratio[0] + " / " + ratio[1];
+}

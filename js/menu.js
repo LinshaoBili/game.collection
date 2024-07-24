@@ -1,5 +1,5 @@
 ls_menu_click = false;
-function updata_menu() {
+function update_menu() {
   let option_list = ["前往主页"];
   let menu = document.createElement("div");
   menu.setAttribute("id", "ls-menu");
@@ -12,16 +12,20 @@ function updata_menu() {
   menu.style.userSelect = "none";
   let m_option = document.createElement("div");
   m_option.setAttribute("id", "ls-m-home");
-  m_option.setAttribute("class", "background");
-  m_option.setAttribute("onclick", "url_r()");
-  m_option.setAttribute("onmouseover", "m_o_hover(true)");
-  m_option.setAttribute("onmouseout", "m_o_hover(false)");
-  m_option.innerHTML = option_list[0];
   m_option.style.color = "#000";
   m_option.style.padding = "10px";
   m_option.style.margin = "5px";
   m_option.style.borderRadius = "15px";
   m_option.style.transition = "0.5s";
+  for (let index = 0; index < option_list.length; index++) {
+    let m_o_span = document.createElement("span");
+    m_o_span.setAttribute("class", "background");
+    if (index == 0) {
+      m_o_span.setAttribute("onclick", "url_r()");
+    }
+    m_o_span.innerHTML = option_list[index];
+    m_option.appendChild(m_o_span);
+  }
   menu.appendChild(m_option);
   let m_div = document.createElement("div");
   m_div.setAttribute("class", "background");
@@ -41,16 +45,6 @@ function updata_menu() {
   m_div.appendChild(m_d_click);
   menu.appendChild(m_div);
   document.getElementById("body").appendChild(menu);
-}
-function m_o_hover(Switch) {
-  let m_option = document.getElementById("ls-m-home");
-  if (Switch == true) {
-    m_option.style.backgroundColor = "#00000030";
-    m_option.style.transition = "0.5s";
-  } else {
-    m_option.style.backgroundColor = "";
-    m_option.style.transition = "1s";
-  }
 }
 function m_d_c_active() {
   let menu = document.getElementById("ls-menu");
