@@ -21,7 +21,7 @@ function Initial_loading() {
     "<div style='text-align: center'>" + VERSION + "</div>",
     "bottom",
     0,
-    "1s",
+    "2s",
     "wait"
   );
 
@@ -133,7 +133,7 @@ function error(text) {
 
 //玩家操作
 function Operate(keydown) {
-  if (keydown == "f11") {
+  if (keydown == "f11" || keydown == "escape") {
     if (!document.fullscreenElement) {
       subject.style.width = "";
       subject.style.margin = "";
@@ -154,10 +154,8 @@ function Operate(keydown) {
 
 //主界面
 function Home(params) {
-  Loading("background", "#131516");
   if (params == "Home") {
-    subject.innerHTML = "";
-  } else {
+    Loading("background", "#131516");
     notification(
       "提醒",
       "若有开启插件请关闭以免影响游戏体验<br>破解复制类 'Dark Reader' 等插件",
@@ -166,6 +164,8 @@ function Home(params) {
       "1s",
       "wait"
     );
+  } else {
+    Loading(subject.innerHTML, "#131516");
   }
 }
 
