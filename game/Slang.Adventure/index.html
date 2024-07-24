@@ -8,15 +8,22 @@
     <title id="game_title">name</title>
     <link id="icon" rel="icon" />
     <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="css/style.css" />
     <script type="text/javascript" src="../../js/shortcut.js"></script>
     <script type="text/javascript" src="../../js/url.js"></script>
     <script type="text/javascript" src="../../js/update.js"></script>
     <script type="text/javascript" src="../../js/menu.js"></script>
+    <script type="text/javascript" src="js/data.js"></script>
+    <script type="text/javascript" src="js/program.js"></script>
   </head>
   <body id="body">
-    <div id="resolution"></div>
+    <div id="subject"></div>
+    <div id="pop-up"></div>
     <script>
-      updata_menu();
+      update_menu();
+      resolution([16,9]);
+      Initial_loading()
+      Home("Home")
     </script>
   </body>
 </html>
