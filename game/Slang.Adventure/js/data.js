@@ -19,6 +19,7 @@ const DefaultJSON = [
     ATK: 1,
     CRT: 5.0,
     CHD: 10.0,
+    rucksack: { ItemMax: 64, spaceMax: 64 },
   },
   {
     id: "entity",
@@ -28,7 +29,13 @@ const DefaultJSON = [
     id: "block",
     /* block */
     empty: { type: "empty", textures: "null" },
-    grass: { type: "earth" },
+    grass: {
+      type: "earth",
+      animation: {
+        fps: 3,
+        wait: 1,
+      },
+    },
     case: { type: "object", textures: "null" },
   },
   {
@@ -47,7 +54,55 @@ const DefaultKeyDown = {
   MoveRight: "d",
   FullScreen: "p",
 };
-
+function Save(params, id, json, text) {
+  if (params == "new") {
+    var Player = getDefaultJSON("Player");
+    var Save = { VERSION: VERSION, Player: Player, KeyDown: DefaultKeyDown };
+    Local_Save(GameName, JSON.stringify(Save));
+  } else {
+    function query() {
+      if (!JSON.parse(Local(GameName))) {
+        Save("new");
+      }
+    }
+    query();
+    var Save = JSON.parse(Local(GameName));
+    if (params == "update") {
+      Save[id][text] = json;
+      console.log("Save > " + text + " > " + json);
+      Local_Save(GameName, JSON.stringify(Save));
+    } else {
+      if (params == "query") {
+        if (!id) {
+          return Save;
+        } else {
+          if (!json) {
+            return Save[id];
+          } else {
+            params = json.split("|");
+            json = Save[id];
+            for (let index = 0; index < params.length; index++) {
+              try {
+                json = json[params[index]];
+              } catch (err) {}
+            }
+            return json;
+          }
+        }
+      }
+    }
+  }
+}
+function GameLocal(id) {
+  var save = JSON.parse(Local(GameName));
+  if (save) {
+    if (save[id]) {
+      return save[id];
+    }
+  } else {
+    Save("new");
+  }
+}
 function getDefaultJSON(id, json) {
   for (let index = 0; index < DefaultJSON.length; index++) {
     if (DefaultJSON[index]["id"] == id) {
@@ -105,11 +160,9 @@ const map = [
       },
       2: {
         1: { block: "grass" },
-        2: { block: "grass" },
         3: { block: "grass" },
         4: { block: "grass" },
         5: { block: "grass" },
-        6: { block: "grass" },
         7: { block: "grass" },
         8: { block: "grass" },
         9: { block: "grass" },
@@ -123,7 +176,6 @@ const map = [
       },
       3: {
         1: { block: "grass" },
-        2: { block: "grass" },
         3: { block: "grass" },
         4: { block: "grass" },
         5: { block: "grass" },
@@ -141,35 +193,23 @@ const map = [
       },
       4: {
         1: { block: "grass" },
-        2: { block: "grass" },
-        3: { block: "grass" },
         4: { block: "grass" },
         5: { block: "grass" },
-        6: { block: "grass" },
         7: { block: "grass" },
         8: { block: "grass" },
-        9: { block: "grass" },
-        10: { block: "grass" },
         11: { block: "grass" },
         12: { block: "grass" },
-        13: { block: "grass" },
         14: { block: "grass" },
         15: { block: "grass" },
         16: { block: "grass" },
       },
       5: {
         1: { block: "grass" },
-        2: { block: "grass" },
         3: { block: "grass" },
-        4: { block: "grass" },
         5: { block: "grass" },
-        6: { block: "grass" },
         7: { block: "grass" },
-        8: { block: "grass" },
         9: { block: "grass" },
         10: { block: "grass" },
-        11: { block: "grass" },
-        12: { block: "grass" },
         13: { block: "grass" },
         14: { block: "grass" },
         15: { block: "grass" },
@@ -177,11 +217,8 @@ const map = [
       },
       6: {
         1: { block: "grass" },
-        2: { block: "grass" },
         3: { block: "grass" },
-        4: { block: "grass" },
         5: { block: "grass" },
-        6: { block: "grass" },
         7: { block: "grass" },
         8: { block: "grass" },
         9: { block: "grass" },

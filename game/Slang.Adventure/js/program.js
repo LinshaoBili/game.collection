@@ -14,8 +14,8 @@ function LoadingIconSize() {
 function Initial_loading() {
   //游戏前设置
   const subject = document.getElementById("subject");
-  const GameName = document.getElementById("game_title").innerHTML;
-  const VERSION = "Pre-alpha 0.01"; //游戏版本
+  GameName = document.getElementById("game_title").innerHTML;
+  VERSION = "Pre-alpha 0.01"; //游戏版本
   notification(
     "游戏版本",
     "<div style='text-align: center'>" + VERSION + "</div>",
@@ -34,12 +34,6 @@ function Initial_loading() {
 
   //游戏界面设置
   subject.style.userSelect = "none";
-
-  //键盘检测
-  window.onkeydown = function (event) {
-    Operate(event.key.toLowerCase());
-    console.log("keyboard " + event.key.toLowerCase());
-  };
 
   //新增快捷栏
   var menu = document.getElementById("ls-m-home");
@@ -62,6 +56,148 @@ function Initial_loading() {
   menu = menu.getElementsByClassName("background");
   for (let index = 0; index < menu.length; index++) {
     menu[index].style.margin = "0px 15px";
+  }
+
+  //键盘检测
+  window.onkeydown = function (event) {
+    Operate(event.key.toLowerCase(), "down");
+    console.log("down > " + event.key.toLowerCase());
+  };
+
+  window.onkeyup = function (event) {
+    Operate(event.key.toLowerCase(), "up");
+    console.log("up > " + event.key.toLowerCase());
+  };
+}
+
+//玩家操作
+function move(entity, key, motion, query, id) {
+  function again(entity, key, motion, query) {
+    setTimeout(function () {
+      move(entity, key, motion, query);
+    }, time);
+  }
+  function off(motion) {
+    Operation[motion] = true;
+    setTimeout(function () {
+      Operation[motion] = 0;
+    }, time);
+  }
+  var time = 500;
+  if (entity == "player") {
+    if (!query) {
+      if (Operation[motion] == true) {
+        return;
+      }
+      if (id >= 1 || Operation[motion] == 0) {
+        var split = motion.split("Move")[1];
+        if (split == "Top") {
+          console.log("Move Top");
+          Operation[motion] = 1;
+          again(entity, key, motion, query, 1);
+        } else {
+          if (split == "Right") {
+            console.log("Move Right");
+            Operation[motion] = 1;
+            again(entity, key, motion, query, 1);
+          } else {
+            if (split == "Bottom") {
+              console.log("Move Bottom");
+              Operation[motion] = 1;
+              again(entity, key, motion, query, 1);
+            } else {
+              if (split == "Left") {
+                console.log("Move Left");
+                Operation[motion] = 1;
+                again(entity, key, motion, query, 1);
+              }
+            }
+          }
+        }
+      }
+    } else {
+      if (query == true) {
+        if (Operation[motion] >= 1) {
+          var split = motion.split("Move")[1];
+          if (split == "Top") {
+            console.log("Stop Top");
+            Operation[motion] = 0;
+            off(motion);
+          } else {
+            if (split == "Right") {
+              console.log("Stop Right");
+              Operation[motion] = 0;
+              off(motion);
+            } else {
+              if (split == "Bottom") {
+                console.log("Stop Bottom");
+                Operation[motion] = 0;
+                off(motion);
+              } else {
+                if (split == "Left") {
+                  console.log("Stop Left");
+                  Operation[motion] = 0;
+                  off(motion);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+PlayerOperation = true;
+Operation = [];
+for (let index = 0; index < jsonObject(DefaultKeyDown).length; index++) {
+  Operation[jsonObject(DefaultKeyDown)[index]] = 0;
+  Operation.length++;
+}
+function Operate(key, way) {
+  var KeyDown = Save("query", "KeyDown");
+  if (way == "down") {
+    if (key == Save("query", "KeyDown", "FullScreen")) {
+      if (!document.fullscreenElement) {
+        document.getElementById("body").requestFullscreen();
+        subject.style.width = "100%";
+        subject.style.margin = "0px auto";
+      } else {
+        document.exitFullscreen();
+        subject.style.width = "";
+        subject.style.margin = "";
+      }
+    }
+    if (PlayerOperation != false) {
+      if (key == KeyDown["MoveTop"]) {
+        move("player", key, "MoveTop");
+      }
+      if (key == KeyDown["MoveLeft"]) {
+        move("player", key, "MoveLeft");
+      }
+      if (key == KeyDown["MoveBottom"]) {
+        move("player", key, "MoveBottom");
+      }
+      if (key == KeyDown["MoveRight"]) {
+        move("player", key, "MoveRight");
+      }
+    }
+  }
+  if (way == "up") {
+    if (PlayerOperation != false) {
+      if (key == KeyDown["MoveTop"]) {
+        move("player", key, "MoveTop", true);
+      }
+      if (key == KeyDown["MoveLeft"]) {
+        move("player", key, "MoveLeft", true);
+      }
+      if (key == KeyDown["MoveBottom"]) {
+        move("player", key, "MoveBottom", true);
+      }
+      if (key == KeyDown["MoveRight"]) {
+        move("player", key, "MoveRight", true);
+      }
+    }
   }
 }
 
@@ -98,13 +234,33 @@ function Preload() {
     var params = getDefaultJSON(list[index]);
     var caches = jsonObject(params);
     for (var i = 0; i < caches.length; i++) {
-      if (!params[caches[i]]["textures"]) {
-        id[id.length] = caches[i];
-        scr[scr.length] = "block/" + caches[i] + ".png";
+      if (params[caches[i]]["animation"]) {
+        if (!params[caches[i]]["animation"]["textures"]) {
+          for (let a = 0; a < params[caches[i]]["animation"]["fps"]; a++) {
+            id[id.length] = caches[i];
+            scr[scr.length] =
+              "block/" + caches[i] + "/" + caches[i] + "_" + a + ".png";
+          }
+        } else {
+          for (
+            let a = 0;
+            a < params[caches[i]]["animation"]["textures"].length;
+            a++
+          ) {
+            id[id.length] = caches[i];
+            scr[scr.length] =
+              "block/" + params[caches[i]]["animation"]["textures"][a];
+          }
+        }
       } else {
-        if (params[caches[i]]["textures"] != "null") {
+        if (!params[caches[i]]["textures"]) {
           id[id.length] = caches[i];
-          scr[scr.length] = "block/" + params[caches[i]]["textures"];
+          scr[scr.length] = "block/" + caches[i] + ".png";
+        } else {
+          if (params[caches[i]]["textures"] != "null") {
+            id[id.length] = caches[i];
+            scr[scr.length] = "block/" + params[caches[i]]["textures"];
+          }
         }
       }
     }
@@ -139,27 +295,6 @@ function error(text) {
     "wait"
   );
   console.error("Error > " + text);
-}
-
-//玩家操作
-function Operate(keydown) {
-  if (keydown == "f11" || keydown == "escape") {
-    if (!document.fullscreenElement) {
-      subject.style.width = "";
-      subject.style.margin = "";
-    }
-  }
-  if (keydown == DefaultKeyDown["FullScreen"]) {
-    if (!document.fullscreenElement) {
-      document.getElementById("body").requestFullscreen();
-      subject.style.width = "100%";
-      subject.style.margin = "0px auto";
-    } else {
-      document.exitFullscreen();
-      subject.style.width = "";
-      subject.style.margin = "";
-    }
-  }
 }
 
 //主界面
@@ -283,7 +418,7 @@ function Map(id) {
       element.style.margin = "-1px";
       element.style.width = 100 + "%";
       if (Map) {
-        var list = ["textures", "rotate"];
+        var list = ["textures", "rotate", "animation"];
         function random(params) {
           //random
           if (params == "rotate") {
@@ -334,11 +469,21 @@ function Map(id) {
                 if (index == 0) {
                   element.style.backgroundImage =
                     "url(textures/block/" + json + ")";
-                }
-                if (index == 1) {
-                  if (json == "random") {
-                    element.style.transform =
-                      "rotate(" + random("rotate") + ")";
+                } else {
+                  if (index == 1) {
+                    if (json == "random") {
+                      element.style.transform =
+                        "rotate(" + random("rotate") + ")";
+                    }
+                  } else {
+                    if (index == 2) {
+                      element.style.backgroundImage =
+                        "url(textures/block/" +
+                        Map["block"] +
+                        "/" +
+                        Map["block"] +
+                        "_1.png)";
+                    }
                   }
                 }
               }
@@ -374,10 +519,12 @@ function Map(id) {
     for (var i = 1; i < Map["length"][0] + 1; i++) {
       var game_map = document.createElement("div");
       game_map.style.display = "flex";
-      for (var index = 1; index < Map["length"][1] + 1; index++) {
-        game_map.appendChild(elementBlock(Map[i][index], Map["length"]));
+      if (Map[i]) {
+        for (var index = 1; index < Map["length"][1] + 1; index++) {
+          game_map.appendChild(elementBlock(Map[i][index], Map["length"]));
+        }
+        body_map.appendChild(game_map);
       }
-      body_map.appendChild(game_map);
     }
     subject.appendChild(body_map);
   }
@@ -386,5 +533,51 @@ function Map(id) {
 //游戏玩法
 function GamePlay(params) {
   if (params == "RPG") {
+  }
+}
+
+//玩家管理
+function LoadingPlayer(params, textures, x, y, direction, size, ratio) {
+  if (!document.getElementById("entity")) {
+    var entity = document.createElement("div");
+    entity.setAttribute("id", "entity");
+    subject.appendChild(entity);
+  }
+  var entity = document.getElementById("entity");
+  if (params == "none") {
+  } else {
+    if (params == "query") {
+      var player = entity.getElementsByClassName("player");
+      if (player) {
+        return player;
+      }
+    } else {
+      if (params == "birth") {
+        var element = document.createElement("div");
+        element.setAttribute("class", "player");
+        element.setAttribute("tag", JSON.stringify({ textures: textures }));
+        element.style.position = "absolute";
+        element.style.width = size + "%";
+        element.style.top = y + "%";
+        element.style.left = x + "%";
+        element.style.transform = "translate(-50%,-100%)";
+        element.style.transition = "0.25s";
+        if (ratio) {
+          element.style.aspectRatio = ratio[0] + "/" + ratio[1];
+        }
+        element.style.backgroundRepeat = "no-repeat";
+        element.style.backgroundSize = "100% 100%";
+        element.style.imageRendering = "pixelated";
+        element.style.backgroundImage =
+          "url(textures/entity/player/" +
+          textures +
+          "/" +
+          direction +
+          "/" +
+          direction +
+          "_0.png)";
+        entity.appendChild(element);
+      }
+    }
   }
 }

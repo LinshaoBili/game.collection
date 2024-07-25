@@ -1,0 +1,48 @@
+Map 可用JSON
+
+
+Player 可用JSON
+textures 纹理{
+    id 角色id
+    textures 纹理名(不用.png)
+    animation 动画{
+        move 移动帧数
+        attack 攻击帧数
+    }
+}
+Name 玩家名字
+HP 生命
+MaxHP  生命上限
+Temperature 玩家体温
+Stamina 玩家耐力
+ATK 攻击力
+CRT 暴击
+CHD 暴击伤害
+rucksack 背包{
+    ItemMax 单个物品上限
+    spaceMax 物品上限
+}
+
+
+entity 可用JSON
+
+
+block 可用JSON
+block{
+    type 类型(empty 空,earth 地面,object 物体)
+    textures 纹理名(要.png,直接"null"无纹理)
+    rotate 旋转(random 随机)
+    animation 动画{
+        fps 帧数
+        wait 切换间隔(1s=1)
+        textures 纹理名(要.png)[
+            纹理路径,纹理路径
+        ]
+    }
+}
+
+
+item 可用JSON
+
+
+particle 可用JSON
