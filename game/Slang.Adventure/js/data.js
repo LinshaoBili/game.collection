@@ -32,8 +32,10 @@ const DefaultJSON = [
     grass: {
       type: "earth",
       animation: {
+        type: "tidy",
         fps: 3,
-        wait: 1,
+        start: 10,
+        wait: 0.5,
       },
     },
     case: { type: "object", textures: "null" },

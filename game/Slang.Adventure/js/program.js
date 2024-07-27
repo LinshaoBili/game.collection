@@ -400,6 +400,32 @@ function Loading(text, color) {
 }
 
 //加载地图
+function animationUpdate(element, textures, id) {
+  if (id) {
+    element = document.getElementById(id);
+    id = null;
+  } else {
+    if (!element) {
+      return;
+    }
+  }
+  element.style.backgroundImage = textures[textures.now];
+  if (textures.length <= 1) {
+    return;
+  }
+  textures.now++;
+  if (textures.now > textures.length) {
+    textures.now = 0;
+  }
+  if (!textures.random) {
+    var time = textures.wait;
+  } else {
+    var time = Math.random() * textures.random;
+  }
+  setTimeout(function () {
+    animationUpdate(element, textures);
+  }, time * 1000);
+}
 function Map(id) {
   for (let index = 0; index < map.length; index++) {
     if (map[index]["Id"] == id) {
@@ -410,8 +436,10 @@ function Map(id) {
   if (!Map) {
     error("未知Map id > " + id);
   } else {
-    function elementBlock(Map, length) {
+    function elementBlock(Map, length, id) {
       //加载材质等
+      id[2] = id[2][2];
+      var block_id = "map" + id[0] + id[1] + id[2];
       var element = document.createElement("span");
       element.setAttribute("tag", JSON.stringify(Map));
       element.style.aspectRatio = "1/1";
@@ -477,12 +505,35 @@ function Map(id) {
                     }
                   } else {
                     if (index == 2) {
-                      element.style.backgroundImage =
-                        "url(textures/block/" +
-                        Map["block"] +
-                        "/" +
-                        Map["block"] +
-                        "_1.png)";
+                      var textures = [];
+                      if (!json["textures"]) {
+                        for (let a = 0; a < json["fps"]; a++) {
+                          textures[a] =
+                            "url(textures/block/" +
+                            Map["block"] +
+                            "/" +
+                            Map["block"] +
+                            "_" +
+                            a +
+                            ".png)";
+                        }
+                      } else {
+                        for (let a = 0; a < json["textures"].length; a++) {
+                          (textures[a] =
+                            "url(textures/block/" + json["textures"][a]),
+                            ")";
+                        }
+                      }
+                      textures.now = 0;
+                      if (json["maxrandom"]) {
+                        textures.random = json["maxrandom"];
+                      } else {
+                        if (json["wait"]) {
+                          textures.wait = json["wait"];
+                        } else {
+                          textures.wait = 1;
+                        }
+                      }
                     }
                   }
                 }
@@ -494,20 +545,43 @@ function Map(id) {
                   "url(textures/block/" + Map["block"] + ".png)";
               }
             }
+            if (index == 2) {
+              element.style.backgroundImage = textures[0];
+              if (json["start"]) {
+                var time = json["start"];
+              } else {
+                var time = 1000;
+              }
+              if (json["type"]) {
+                if (json["type"] == "tidy") {
+                  setTimeout(function () {
+                    animationUpdate(element, textures, block_id);
+                  }, (id[0] + id[1] * id[1]) * time);
+                }
+              } else {
+                setTimeout(function () {
+                  animationUpdate(element, textures, block_id);
+                }, time * 1000);
+              }
+            }
           }
         }
-        element.style.backgroundRepeat = "no-repeat";
         if (Map["Size"]) {
           element.style.backgroundSize = Map["Size"];
         } else {
           element.style.backgroundSize = "100% 100%";
         }
-        element.style.backgroundClip = "content-box";
-        element.style.imageRendering = "pixelated";
         if (Map["superjacent"]) {
           element.appendChild(elementBlock(Map["superjacent"], length));
         }
+      } else {
+        element.setAttribute("tag", "");
       }
+      element.setAttribute("id", block_id);
+      element.style.backgroundClip = "content-box";
+      element.style.imageRendering = "pixelated";
+      element.style.backgroundRepeat = "no-repeat";
+      element.style.backgroundPosition = "0% 0%";
       return element;
     }
     var body_map = document.createElement("div");
@@ -521,7 +595,13 @@ function Map(id) {
       game_map.style.display = "flex";
       if (Map[i]) {
         for (var index = 1; index < Map["length"][1] + 1; index++) {
-          game_map.appendChild(elementBlock(Map[i][index], Map["length"]));
+          game_map.appendChild(
+            elementBlock(Map[i][index], Map["length"], [
+              i,
+              index,
+              [i, index, Math.floor(Math.random() * 1145141919810)],
+            ])
+          );
         }
         body_map.appendChild(game_map);
       }

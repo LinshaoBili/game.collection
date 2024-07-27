@@ -33,8 +33,11 @@ block{
     textures 纹理名(要.png,直接"null"无纹理)
     rotate 旋转(random 随机)
     animation 动画{
+        type 类型(tidy 整齐)
         fps 帧数
-        wait 切换间隔(1s=1)
+        start 起步时间(1s=1000)
+        wait 切换间隔(1s=1000)
+        maxrandom 随机切换间隔(1s=1000)
         textures 纹理名(要.png)[
             纹理路径,纹理路径
         ]
