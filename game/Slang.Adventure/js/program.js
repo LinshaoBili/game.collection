@@ -71,6 +71,56 @@ function Initial_loading() {
 }
 
 //玩家操作
+function playerMove() {
+  var player = document.getElementsByClassName("player");
+  var textures = [];
+  for (let index = 0; index < player.length; index++) {
+    textures[index] = JSON.parse(player[index].getAttribute("tag"))["textures"];
+  }
+  var Map = document.getElementById("Map").children[0].children[0];
+  var Screen = [subject.offsetWidth, subject.offsetHeight];
+  var speed = [
+    (Map.offsetWidth / Screen[0]) * 30,
+    (Map.offsetHeight / Screen[1]) * 30,
+  ];
+  if (
+    (Operation["MoveTop"] >= 1 && Operation["MoveRight"] >= 1) ||
+    (Operation["MoveRight"] >= 1 && Operation["MoveBottom"] >= 1) ||
+    (Operation["MoveBottom"] >= 1 && Operation["MoveLeft"] >= 1) ||
+    (Operation["MoveLeft"] >= 1 && Operation["MoveTop"] >= 1)
+  ) {
+    speed[0] /= 1.25;
+    speed[1] /= 1.25;
+  }
+  if (Operation["MoveTop"] >= 1) {
+    for (let index = 0; index < player.length; index++) {
+      player[index].style.top =
+        Number(player[index].style.top.split("%")[0]) - Number(speed[1]) + "%";
+    }
+  }
+  if (Operation["MoveLeft"] >= 1) {
+    for (let index = 0; index < player.length; index++) {
+      player[index].style.left =
+        Number(player[index].style.left.split("%")[0]) - Number(speed[0]) + "%";
+    }
+  }
+  if (Operation["MoveBottom"] >= 1) {
+    for (let index = 0; index < player.length; index++) {
+      player[index].style.top =
+        Number(player[index].style.top.split("%")[0]) + Number(speed[1]) + "%";
+    }
+  }
+  if (Operation["MoveRight"] >= 1) {
+    for (let index = 0; index < player.length; index++) {
+      player[index].style.left =
+        Number(player[index].style.left.split("%")[0]) + Number(speed[0]) + "%";
+    }
+  }
+  setTimeout(function () {
+    playerMove();
+  }, 50);
+}
+
 function move(entity, key, motion, query, id) {
   function again(entity, key, motion, query) {
     setTimeout(function () {
@@ -83,7 +133,7 @@ function move(entity, key, motion, query, id) {
       Operation[motion] = 0;
     }, time);
   }
-  var time = 500;
+  var time = 0;
   if (entity == "player") {
     if (!query) {
       if (Operation[motion] == true) {
@@ -92,22 +142,18 @@ function move(entity, key, motion, query, id) {
       if (id >= 1 || Operation[motion] == 0) {
         var split = motion.split("Move")[1];
         if (split == "Top") {
-          console.log("Move Top");
           Operation[motion] = 1;
           again(entity, key, motion, query, 1);
         } else {
           if (split == "Right") {
-            console.log("Move Right");
             Operation[motion] = 1;
             again(entity, key, motion, query, 1);
           } else {
             if (split == "Bottom") {
-              console.log("Move Bottom");
               Operation[motion] = 1;
               again(entity, key, motion, query, 1);
             } else {
               if (split == "Left") {
-                console.log("Move Left");
                 Operation[motion] = 1;
                 again(entity, key, motion, query, 1);
               }
@@ -120,22 +166,18 @@ function move(entity, key, motion, query, id) {
         if (Operation[motion] >= 1) {
           var split = motion.split("Move")[1];
           if (split == "Top") {
-            console.log("Stop Top");
             Operation[motion] = 0;
             off(motion);
           } else {
             if (split == "Right") {
-              console.log("Stop Right");
               Operation[motion] = 0;
               off(motion);
             } else {
               if (split == "Bottom") {
-                console.log("Stop Bottom");
                 Operation[motion] = 0;
                 off(motion);
               } else {
                 if (split == "Left") {
-                  console.log("Stop Left");
                   Operation[motion] = 0;
                   off(motion);
                 }
@@ -316,6 +358,7 @@ function Home(params) {
         Map("MainInterface");
         setTimeout(function () {
           Loading("false");
+          GamePlay("RPG");
         }, 1000);
       }
     }
@@ -585,11 +628,14 @@ function Map(id) {
       return element;
     }
     var body_map = document.createElement("div");
+    body_map.setAttribute("id", "Map");
+    body_map.setAttribute("tag", JSON.stringify({ length: Map["length"] }));
     body_map.style.width = Map["size"] + "%";
     body_map.style.transform = "translate(-50%,-50%)";
     body_map.style.top = "50%";
     body_map.style.left = "50%";
     body_map.style.position = "absolute";
+    body_map.style.overflow = "hidden";
     for (var i = 1; i < Map["length"][0] + 1; i++) {
       var game_map = document.createElement("div");
       game_map.style.display = "flex";
@@ -613,9 +659,10 @@ function Map(id) {
 //游戏玩法
 function GamePlay(params) {
   if (params == "RPG") {
+    LoadingPlayer("birth", "default", 50, 50, "top", 5, [1, 2]);
+    playerMove();
   }
 }
-
 //玩家管理
 function LoadingPlayer(params, textures, x, y, direction, size, ratio) {
   if (!document.getElementById("entity")) {
@@ -641,7 +688,7 @@ function LoadingPlayer(params, textures, x, y, direction, size, ratio) {
         element.style.top = y + "%";
         element.style.left = x + "%";
         element.style.transform = "translate(-50%,-100%)";
-        element.style.transition = "0.25s";
+        element.style.transition = "0.05s linear";
         if (ratio) {
           element.style.aspectRatio = ratio[0] + "/" + ratio[1];
         }
