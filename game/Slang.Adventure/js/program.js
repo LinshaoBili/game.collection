@@ -142,6 +142,7 @@ function playerMove() {
   }
   for (let index = 0; index < playerelement.length; index++) {
     if (Operation["MoveTop"] >= 1) {
+      
       playerMoveAnimation(
         playerelement[index],
         "MoveTop",
@@ -669,22 +670,24 @@ function Map(id) {
               }
             }
             if (index == 2) {
-              element.style.backgroundImage = textures[0];
-              if (json["start"]) {
-                var time = json["start"];
-              } else {
-                var time = 1000;
-              }
-              if (json["type"]) {
-                if (json["type"] == "tidy") {
+              if (json) {
+                element.style.backgroundImage = textures[0];
+                if (json["start"]) {
+                  var time = json["start"];
+                } else {
+                  var time = 1000;
+                }
+                if (json["type"]) {
+                  if (json["type"] == "tidy") {
+                    setTimeout(function () {
+                      animationUpdate(element, textures, block_id);
+                    }, (id[0] + id[1] * id[1]) * time);
+                  }
+                } else {
                   setTimeout(function () {
                     animationUpdate(element, textures, block_id);
-                  }, (id[0] + id[1] * id[1]) * time);
+                  }, time * 1000);
                 }
-              } else {
-                setTimeout(function () {
-                  animationUpdate(element, textures, block_id);
-                }, time * 1000);
               }
             }
           }
@@ -705,6 +708,7 @@ function Map(id) {
       element.style.imageRendering = "pixelated";
       element.style.backgroundRepeat = "no-repeat";
       element.style.backgroundPosition = "0% 0%";
+      B = block_id;
       return element;
     }
     var body_map = document.createElement("div");
@@ -780,10 +784,11 @@ function LoadingPlayer(params, textures, x, y, direction, size, ratio) {
         element.style.width = size + "%";
         element.style.top = y + "%";
         element.style.left = x + "%";
-        element.style.transform = "translate(-50%,-100%)";
         element.style.transition = "0.05s linear";
         if (ratio) {
           element.style.aspectRatio = ratio[0] + "/" + ratio[1];
+        } else {
+          element.style.aspectRatio = "1/2";
         }
         element.style.backgroundRepeat = "no-repeat";
         element.style.backgroundSize = "100% 100%";
@@ -796,8 +801,56 @@ function LoadingPlayer(params, textures, x, y, direction, size, ratio) {
           "/" +
           direction +
           "_0.png)";
+        var collision = document.createElement("div");
+        collision.setAttribute("class", "collision");
+        collision.style.aspectRatio = "1/1";
+        collision.style.width = "100%";
+        collision.style.position = "absolute";
+        collision.style.bottom = "-10%";
+        element.appendChild(collision);
         entity.appendChild(element);
       }
     }
   }
+}
+
+//元素之间碰撞检测
+function checkCrash(A, B) {
+  var collision = A.getElementsByClassName("collision")[0];
+  var Ax = A.offsetLeft;
+  var Ay = A.offsetTop;
+  if (collision) {
+    Ax += collision.offsetLeft;
+    Ay += collision.offsetTop;
+    var Awidth = collision.offsetWidth;
+    var Aheight = collision.offsetHeight;
+  } else {
+    var Awidth = A.offsetWidth;
+    var Aheight = A.offsetHeight;
+  }
+  if (!B) {
+    return { x: Ax, y: Ay, width: Awidth, height: Aheight };
+  }
+  var collision = B.getElementsByClassName("collision")[0];
+  var Bx = B.offsetLeft;
+  var By = B.offsetTop;
+  if (collision) {
+    Bx += collision.offsetLeft;
+    By += collision.offsetTop;
+    var Bwidth = collision.offsetWidth;
+    var Bheight = collision.offsetHeight;
+  } else {
+    var Bwidth = B.offsetWidth;
+    var Bheight = B.offsetHeight;
+  }
+  var bool = true;
+  if (
+    Ax + Awidth < Bx ||
+    Bx + Bwidth < Ax ||
+    Ay + Aheight < By ||
+    By + Bheight < Ay
+  ) {
+    bool = false;
+  }
+  return bool;
 }

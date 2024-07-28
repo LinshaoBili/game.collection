@@ -36,7 +36,7 @@ entity 可用JSON
 
 block 可用JSON
 block{
-    type 类型(empty 空,earth 地面,object 物体)
+    type 类型(empty 空,earth 地面,object 物体,wall 墙体)
     textures 纹理名(要.png,直接"null"无纹理)
     rotate 旋转(random 随机)
     animation 动画{
