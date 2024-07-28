@@ -59,27 +59,27 @@ const DefaultKeyDown = {
 function Save(params, id, json, text) {
   if (params == "new") {
     var Player = getDefaultJSON("Player");
-    var Save = { VERSION: VERSION, Player: Player, KeyDown: DefaultKeyDown };
-    Local_Save(GameName, JSON.stringify(Save));
+    var save = { VERSION: VERSION, Player: Player, KeyDown: DefaultKeyDown };
+    Local_Save(GameName, JSON.stringify(save));
   } else {
     if (!JSON.parse(Local(GameName))) {
       Save("new");
     }
-    var Save = JSON.parse(Local(GameName));
+    var save = JSON.parse(Local(GameName));
     if (params == "update") {
-      Save[id][text] = json;
+      save[id][text] = json;
       console.log("Save > " + text + " > " + json);
-      Local_Save(GameName, JSON.stringify(Save));
+      Local_Save(GameName, JSON.stringify(save));
     } else {
       if (params == "query") {
         if (!id) {
-          return Save;
+          return save;
         } else {
           if (!json) {
-            return Save[id];
+            return save[id];
           } else {
             params = json.split("|");
-            json = Save[id];
+            json = save[id];
             for (let index = 0; index < params.length; index++) {
               try {
                 json = json[params[index]];
