@@ -65,7 +65,6 @@ function Save(params, id, json, text) {
     if (!JSON.parse(Local(GameName))) {
       Save("new");
     }
-    query();
     var Save = JSON.parse(Local(GameName));
     if (params == "update") {
       Save[id][text] = json;
