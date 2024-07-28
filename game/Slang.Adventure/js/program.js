@@ -61,12 +61,12 @@ function Initial_loading() {
   //键盘检测
   window.onkeydown = function (event) {
     Operate(event.key.toLowerCase(), "down");
-    console.log("down > " + event.key.toLowerCase());
+    // console.log("down > " + event.key.toLowerCase());
   };
 
   window.onkeyup = function (event) {
     Operate(event.key.toLowerCase(), "up");
-    console.log("up > " + event.key.toLowerCase());
+    // console.log("up > " + event.key.toLowerCase());
   };
 }
 
@@ -97,7 +97,6 @@ function playerMoveAnimation(params, id, textures, animation, time) {
           .replace(/&action&/g, direction)
           .replace(/&animation&/g, direction + "_0");
       }
-      console.log("1");
       return;
     }
     Operation[id]++;
@@ -128,8 +127,8 @@ function playerMove() {
   var Map = document.getElementById("Map").children[0].children[0];
   var Screen = [subject.offsetWidth, subject.offsetHeight];
   var speed = [
-    (Map.offsetWidth / Screen[0]) * 20,
-    (Map.offsetHeight / Screen[1]) * 20,
+    (Map.offsetWidth / Screen[0]) * 30,
+    (Map.offsetHeight / Screen[1]) * 30,
   ];
   if (
     (Operation["MoveTop"] >= 1 && Operation["MoveRight"] >= 1) ||
@@ -137,12 +136,69 @@ function playerMove() {
     (Operation["MoveBottom"] >= 1 && Operation["MoveLeft"] >= 1) ||
     (Operation["MoveLeft"] >= 1 && Operation["MoveTop"] >= 1)
   ) {
-    speed[0] /= 1.25;
-    speed[1] /= 1.25;
+    speed[0] /= 1.05;
+    speed[1] /= 1.05;
   }
   for (let index = 0; index < playerelement.length; index++) {
+    var Map = document.getElementById("Map").children;
+    for (var i = 0; i < Map.length; i++) {
+      for (var a = 0; a < Map[i].children.length; a++) {
+        if (Map[i].children[a].getAttribute("tag")) {
+          var tag = JSON.parse(Map[i].children[a].getAttribute("tag"));
+          if (!tag["type"]) {
+            var type = getDefaultJSON("block", tag["block"])["type"];
+          } else {
+            var type = tag["type"];
+          }
+          if (type == "wall") {
+            var player = LoadingPlayer("query");
+            for (let b = 0; b < player.length; b++) {
+              var A = checkCrash(Map[i].children[a]);
+              var B = checkCrash(player[b]);
+              var collision = checkCrash(Map[i].children[a], player[b]);
+              if (collision == true) {
+                var number = 0.15;
+                if (
+                  A["x"] + A["width"] < B["x"] + B["width"] * number ||
+                  B["x"] + B["width"] < A["x"] + A["width"] * number
+                ) {
+                } else {
+                  if (A["y"] > B["y"]) {
+                    if (Operation["MoveBottom"] > 0) {
+                      playerMoveAnimation("clear", "MoveBottom");
+                      Operation["MoveBottom"] = 0;
+                    }
+                  } else {
+                    if (Operation["MoveTop"] > 0) {
+                      playerMoveAnimation("clear", "MoveTop");
+                      Operation["MoveTop"] = 0;
+                    }
+                  }
+                }
+                if (
+                  A["y"] + A["height"] < B["y"] + B["height"] * number ||
+                  B["y"] + B["height"] < A["y"] + A["height"] * number
+                ) {
+                } else {
+                  if (A["x"] > B["x"]) {
+                    if (Operation["MoveRight"] > 0) {
+                      playerMoveAnimation("clear", "MoveRight");
+                      Operation["MoveRight"] = 0;
+                    }
+                  } else {
+                    if (Operation["MoveLeft"] > 0) {
+                      playerMoveAnimation("clear", "MoveLeft");
+                      Operation["MoveLeft"] = 0;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     if (Operation["MoveTop"] >= 1) {
-      
       playerMoveAnimation(
         playerelement[index],
         "MoveTop",
@@ -152,7 +208,7 @@ function playerMove() {
       );
       playerelement[index].style.top =
         Number(playerelement[index].style.top.split("%")[0]) -
-        Number(speed[1]) +
+        Number(speed[1]) / 2 +
         "%";
     }
     if (Operation["MoveLeft"] >= 1) {
@@ -165,7 +221,7 @@ function playerMove() {
       );
       playerelement[index].style.left =
         Number(playerelement[index].style.left.split("%")[0]) -
-        Number(speed[0]) +
+        Number(speed[0]) / 2 +
         "%";
     }
     if (Operation["MoveBottom"] >= 1) {
@@ -178,7 +234,7 @@ function playerMove() {
       );
       playerelement[index].style.top =
         Number(playerelement[index].style.top.split("%")[0]) +
-        Number(speed[1]) +
+        Number(speed[1]) / 2 +
         "%";
     }
     if (Operation["MoveRight"] >= 1) {
@@ -191,8 +247,23 @@ function playerMove() {
       );
       playerelement[index].style.left =
         Number(playerelement[index].style.left.split("%")[0]) +
-        Number(speed[0]) +
+        Number(speed[0]) / 2 +
         "%";
+    }
+  }
+  if (PlayerOperation == false) {
+    var key = null;
+    if (Operation["MoveTop"] > 0) {
+      move("player", key, "MoveTop", true);
+    }
+    if (Operation["MoveLeft"] > 0) {
+      move("player", key, "MoveLeft", true);
+    }
+    if (Operation["MoveBottom"] > 0) {
+      move("player", key, "MoveBottom", true);
+    }
+    if (Operation["MoveRight"] > 0) {
+      move("player", key, "MoveRight", true);
     }
   }
   setTimeout(function () {
@@ -804,9 +875,10 @@ function LoadingPlayer(params, textures, x, y, direction, size, ratio) {
         var collision = document.createElement("div");
         collision.setAttribute("class", "collision");
         collision.style.aspectRatio = "1/1";
-        collision.style.width = "100%";
+        collision.style.width = "80%";
         collision.style.position = "absolute";
         collision.style.bottom = "-10%";
+        collision.style.left = "9.5%";
         element.appendChild(collision);
         entity.appendChild(element);
       }
