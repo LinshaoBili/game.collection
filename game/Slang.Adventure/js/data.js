@@ -7,9 +7,24 @@ const DefaultJSON = [
     id: "Player",
     /* Player */
     textures: [
-      { id: "player", textures: "default", animation: { move: 3, attack: 1 } },
-      { id: "steve", textures: "steve", animation: { move: 0, attack: 0 } },
-      { id: "alex", textures: "alex", animation: { move: 0, attack: 0 } },
+      {
+        id: "player",
+        textures: "default",
+        animation: {
+          fps: { move: 3, attack: 1 },
+          playback: { move: [0, 1, 0, 2], attack: [0] },
+        },
+      },
+      {
+        id: "steve",
+        textures: "steve",
+        animation: { fps: { move: 0, attack: 0 } },
+      },
+      {
+        id: "alex",
+        textures: "alex",
+        animation: { fps: { move: 0, attack: 0 } },
+      },
     ],
     Name: null,
     HP: 100,

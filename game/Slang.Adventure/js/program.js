@@ -71,17 +71,65 @@ function Initial_loading() {
 }
 
 //玩家操作
+function playerMoveAnimation(params, id, textures, animation) {
+  var direction = id.toLowerCase().split("move")[1];
+  if (params == "on") {
+    if (PlayerAnimation[id] == false) {
+      PlayerAnimation[id] = true;
+    }
+    return;
+  }
+  if (params == "clear") {
+    PlayerAnimation[id] = true;
+    Animation(params, textures, animation, id, direction);
+    return;
+  }
+  function Animation(params, textures, animation, id, direction) {
+    var Url = "url(textures/entity/player/&textures&/&action&/&animation&.png)";
+    if (params == "clear") {
+      params = document.getElementsByClassName("player");
+      for (let index = 0; index < params.length; index++) {
+        tag = JSON.parse(params[index].getAttribute("tag"));
+        params[index].style.backgroundImage = Url.replace(
+          /&textures&/g,
+          tag["textures"]
+        )
+          .replace(/&action&/g, direction)
+          .replace(/&animation&/g, direction + "_0");
+      }
+      console.log("1");
+      return;
+    }
+    Operation[id]++;
+    if (Operation[id] > animation.length) {
+      Operation[id] = 1;
+    }
+    params.style.backgroundImage = Url.replace(/&textures&/g, textures)
+      .replace(/&action&/g, direction)
+      .replace(/&animation&/g, direction + "_" + animation[Operation[id] - 1]);
+  }
+  if (PlayerAnimation[id] == true) {
+    PlayerAnimation[id] = false;
+    Animation(params, textures, animation, id, direction);
+    setTimeout(function () {
+      playerMoveAnimation("on", id);
+    }, 200);
+  }
+}
 function playerMove() {
-  var player = document.getElementsByClassName("player");
+  var playerelement = document.getElementsByClassName("player");
   var textures = [];
-  for (let index = 0; index < player.length; index++) {
-    textures[index] = JSON.parse(player[index].getAttribute("tag"))["textures"];
+  var animation = [];
+  for (let index = 0; index < playerelement.length; index++) {
+    let tag = JSON.parse(playerelement[index].getAttribute("tag"));
+    textures[index] = tag["textures"];
+    animation[index] = tag["animation"]["playback"]["move"];
   }
   var Map = document.getElementById("Map").children[0].children[0];
   var Screen = [subject.offsetWidth, subject.offsetHeight];
   var speed = [
-    (Map.offsetWidth / Screen[0]) * 30,
-    (Map.offsetHeight / Screen[1]) * 30,
+    (Map.offsetWidth / Screen[0]) * 20,
+    (Map.offsetHeight / Screen[1]) * 20,
   ];
   if (
     (Operation["MoveTop"] >= 1 && Operation["MoveRight"] >= 1) ||
@@ -92,28 +140,54 @@ function playerMove() {
     speed[0] /= 1.25;
     speed[1] /= 1.25;
   }
-  if (Operation["MoveTop"] >= 1) {
-    for (let index = 0; index < player.length; index++) {
-      player[index].style.top =
-        Number(player[index].style.top.split("%")[0]) - Number(speed[1]) + "%";
+  for (let index = 0; index < playerelement.length; index++) {
+    if (Operation["MoveTop"] >= 1) {
+      playerMoveAnimation(
+        playerelement[index],
+        "MoveTop",
+        textures[index],
+        animation[index]
+      );
+      playerelement[index].style.top =
+        Number(playerelement[index].style.top.split("%")[0]) -
+        Number(speed[1]) +
+        "%";
     }
-  }
-  if (Operation["MoveLeft"] >= 1) {
-    for (let index = 0; index < player.length; index++) {
-      player[index].style.left =
-        Number(player[index].style.left.split("%")[0]) - Number(speed[0]) + "%";
+    if (Operation["MoveLeft"] >= 1) {
+      playerMoveAnimation(
+        playerelement[index],
+        "MoveLeft",
+        textures[index],
+        animation[index]
+      );
+      playerelement[index].style.left =
+        Number(playerelement[index].style.left.split("%")[0]) -
+        Number(speed[0]) +
+        "%";
     }
-  }
-  if (Operation["MoveBottom"] >= 1) {
-    for (let index = 0; index < player.length; index++) {
-      player[index].style.top =
-        Number(player[index].style.top.split("%")[0]) + Number(speed[1]) + "%";
+    if (Operation["MoveBottom"] >= 1) {
+      playerMoveAnimation(
+        playerelement[index],
+        "MoveBottom",
+        textures[index],
+        animation[index]
+      );
+      playerelement[index].style.top =
+        Number(playerelement[index].style.top.split("%")[0]) +
+        Number(speed[1]) +
+        "%";
     }
-  }
-  if (Operation["MoveRight"] >= 1) {
-    for (let index = 0; index < player.length; index++) {
-      player[index].style.left =
-        Number(player[index].style.left.split("%")[0]) + Number(speed[0]) + "%";
+    if (Operation["MoveRight"] >= 1) {
+      playerMoveAnimation(
+        playerelement[index],
+        "MoveRight",
+        textures[index],
+        animation[index]
+      );
+      playerelement[index].style.left =
+        Number(playerelement[index].style.left.split("%")[0]) +
+        Number(speed[0]) +
+        "%";
     }
   }
   setTimeout(function () {
@@ -140,21 +214,20 @@ function move(entity, key, motion, query, id) {
         return;
       }
       if (id >= 1 || Operation[motion] == 0) {
+        if (Operation[motion] < 1) {
+          Operation[motion] = 1;
+        }
         var split = motion.split("Move")[1];
         if (split == "Top") {
-          Operation[motion] = 1;
           again(entity, key, motion, query, 1);
         } else {
           if (split == "Right") {
-            Operation[motion] = 1;
             again(entity, key, motion, query, 1);
           } else {
             if (split == "Bottom") {
-              Operation[motion] = 1;
               again(entity, key, motion, query, 1);
             } else {
               if (split == "Left") {
-                Operation[motion] = 1;
                 again(entity, key, motion, query, 1);
               }
             }
@@ -185,16 +258,19 @@ function move(entity, key, motion, query, id) {
             }
           }
         }
+        playerMoveAnimation("clear", motion);
       }
     }
   }
 }
 
 PlayerOperation = true;
+PlayerAnimation = [];
 Operation = [];
 for (let index = 0; index < jsonObject(DefaultKeyDown).length; index++) {
   Operation[jsonObject(DefaultKeyDown)[index]] = 0;
-  Operation.length++;
+  PlayerAnimation[jsonObject(DefaultKeyDown)[index]] = true;
+  Operation.length = PlayerAnimation.length++;
 }
 function Operate(key, way) {
   var KeyDown = Save("query", "KeyDown");
@@ -254,7 +330,7 @@ function Preload() {
   for (var index = 0; index < params.length; index++) {
     //Player
     caches[0] = params[index]["textures"];
-    caches[1] = params[index]["animation"]["move"];
+    caches[1] = params[index]["animation"]["fps"]["move"];
     for (var i = 0; i < caches[1]; i++) {
       for (var a = 0; a < direction.length; a++) {
         id[id.length] = params[index]["id"];
@@ -680,9 +756,22 @@ function LoadingPlayer(params, textures, x, y, direction, size, ratio) {
       }
     } else {
       if (params == "birth") {
+        var animation = getDefaultJSON("Player", "textures");
+        for (let index = 0; index < animation.length; index++) {
+          if (animation[index]["textures"] == textures) {
+            animation = animation[index]["animation"];
+            break;
+          }
+        }
         var element = document.createElement("div");
         element.setAttribute("class", "player");
-        element.setAttribute("tag", JSON.stringify({ textures: textures }));
+        element.setAttribute(
+          "tag",
+          JSON.stringify({
+            textures: textures,
+            animation: animation,
+          })
+        );
         element.style.position = "absolute";
         element.style.width = size + "%";
         element.style.top = y + "%";

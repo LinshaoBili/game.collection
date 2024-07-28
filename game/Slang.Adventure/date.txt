@@ -6,8 +6,14 @@ textures 纹理{
     id 角色id
     textures 纹理名(不用.png)
     animation 动画{
+        fps 帧数{
         move 移动帧数
         attack 攻击帧数
+        }
+        playback 动画播放顺序 {
+            move 移动[0,1,0,2]
+            attack 攻击[0]
+        }
     }
 }
 Name 玩家名字
