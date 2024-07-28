@@ -13,6 +13,7 @@ textures 纹理{
         playback 动画播放顺序 {
             move 移动[0,1,0,2]
             attack 攻击[0]
+            time 间隔(1s=1000)
         }
     }
 }

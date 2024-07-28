@@ -12,18 +12,24 @@ const DefaultJSON = [
         textures: "default",
         animation: {
           fps: { move: 3, attack: 1 },
-          playback: { move: [0, 1, 0, 2], attack: [0] },
+          playback: { move: [0, 1, 0, 2], attack: [0], time: 200 },
         },
       },
       {
         id: "steve",
         textures: "steve",
-        animation: { fps: { move: 0, attack: 0 } },
+        animation: {
+          fps: { move: 0, attack: 0 },
+          playback: { move: [0, 1, 0, 2], attack: [0], time: 200 },
+        },
       },
       {
         id: "alex",
         textures: "alex",
-        animation: { fps: { move: 0, attack: 0 } },
+        animation: {
+          fps: { move: 0, attack: 0 },
+          playback: { move: [0, 1, 0, 2], attack: [0], time: 200 },
+        },
       },
     ],
     Name: null,

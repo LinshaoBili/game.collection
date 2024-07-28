@@ -71,7 +71,7 @@ function Initial_loading() {
 }
 
 //玩家操作
-function playerMoveAnimation(params, id, textures, animation) {
+function playerMoveAnimation(params, id, textures, animation, time) {
   var direction = id.toLowerCase().split("move")[1];
   if (params == "on") {
     if (PlayerAnimation[id] == false) {
@@ -113,7 +113,7 @@ function playerMoveAnimation(params, id, textures, animation) {
     Animation(params, textures, animation, id, direction);
     setTimeout(function () {
       playerMoveAnimation("on", id);
-    }, 200);
+    }, time);
   }
 }
 function playerMove() {
@@ -123,7 +123,7 @@ function playerMove() {
   for (let index = 0; index < playerelement.length; index++) {
     let tag = JSON.parse(playerelement[index].getAttribute("tag"));
     textures[index] = tag["textures"];
-    animation[index] = tag["animation"]["playback"]["move"];
+    animation[index] = tag["animation"]["playback"];
   }
   var Map = document.getElementById("Map").children[0].children[0];
   var Screen = [subject.offsetWidth, subject.offsetHeight];
@@ -146,7 +146,8 @@ function playerMove() {
         playerelement[index],
         "MoveTop",
         textures[index],
-        animation[index]
+        animation[index]["move"],
+        animation[index]["time"]
       );
       playerelement[index].style.top =
         Number(playerelement[index].style.top.split("%")[0]) -
@@ -158,7 +159,8 @@ function playerMove() {
         playerelement[index],
         "MoveLeft",
         textures[index],
-        animation[index]
+        animation[index]["move"],
+        animation[index]["time"]
       );
       playerelement[index].style.left =
         Number(playerelement[index].style.left.split("%")[0]) -
@@ -170,7 +172,8 @@ function playerMove() {
         playerelement[index],
         "MoveBottom",
         textures[index],
-        animation[index]
+        animation[index]["move"],
+        animation[index]["time"]
       );
       playerelement[index].style.top =
         Number(playerelement[index].style.top.split("%")[0]) +
@@ -182,7 +185,8 @@ function playerMove() {
         playerelement[index],
         "MoveRight",
         textures[index],
-        animation[index]
+        animation[index]["move"],
+        animation[index]["time"]
       );
       playerelement[index].style.left =
         Number(playerelement[index].style.left.split("%")[0]) +
