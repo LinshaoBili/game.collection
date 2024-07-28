@@ -62,10 +62,8 @@ function Save(params, id, json, text) {
     var Save = { VERSION: VERSION, Player: Player, KeyDown: DefaultKeyDown };
     Local_Save(GameName, JSON.stringify(Save));
   } else {
-    function query() {
-      if (!JSON.parse(Local(GameName))) {
-        Save("new");
-      }
+    if (!JSON.parse(Local(GameName))) {
+      Save("new");
     }
     query();
     var Save = JSON.parse(Local(GameName));
